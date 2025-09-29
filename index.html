@@ -33,6 +33,13 @@
       transition:transform .2s ease, box-shadow .2s ease; cursor:pointer;
       display:inline-flex; align-items:center; gap:.5rem;
     }
+    .email-display {
+  font-size: 16px;
+  font-weight: 700;
+  color: black; /* 金色 */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
     .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 6px rgba(0,0,0,.35); }
 
     .hero{padding:28px 0}
@@ -101,15 +108,20 @@
 
 </head>
 <body>
-  <header>
-    <div class="wrap bar">
+<header>
+  <div class="wrap bar">
+    <div>
       <h1 class="name" data-i18n="name">Yuehang Lin</h1>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <a class="btn" id="cvBtn" href="Yuehang CV.pdf" download data-i18n="btn_download">Download CV</a>
-        <button id="langToggle" class="btn" type="button" aria-label="Toggle language">中文</button>
-      </div>
+      <!-- ★ 在这里插入邮箱 -->
+      <div id="emailDisplay" class="email-display">inkofpluto@gmail.com</div>
     </div>
-  </header>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a class="btn" id="cvBtn" href="Yuehang CV.pdf" download data-i18n="btn_download">Download CV</a>
+      <button id="langToggle" class="btn" type="button" aria-label="Toggle language">中文</button>
+    </div>
+  </div>
+</header>
+
 
   <main class="wrap hero">
     <section class="panel" aria-label="Intro">
@@ -411,16 +423,24 @@ function applyI18n(lang){
       el.textContent = dict[key];
     }
   });
+
   // 切换按钮文字
   $toggle.textContent = (lang === 'en') ? '中文' : 'English';
 
-  // ★ 根据语言切换下载简历链接与文件名
+  // 切换简历文件
   const $cvBtn = document.getElementById('cvBtn');
   if ($cvBtn && CV[lang]) {
-    $cvBtn.href = CV[lang].href;                         // 切换到对应的CV文件
-    $cvBtn.setAttribute('download', CV[lang].filename);  // 设置下载时的文件名
+    $cvBtn.href = CV[lang].href;
+    $cvBtn.setAttribute('download', CV[lang].filename);
+  }
+
+  // ★ 切换邮箱
+  const $email = document.getElementById('emailDisplay');
+  if ($email) {
+    $email.textContent = (lang === 'en') ? "inkofpluto@gmail.com" : "inkofpluto@163.com";
   }
 }
+
 
   // 初始英文
   applyI18n(currentLang);
