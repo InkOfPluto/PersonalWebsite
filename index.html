@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yuehang Lin — HCI/VR/Haptics</title>
+  <style>
+    :root{
+      --ink:#222; --muted:#444; --bg-glass:rgba(255,255,255,.9); --ring:rgba(0,0,0,.15);
+      --card:#f7f7f7; --accent:#7aa2ff; --accent2:#2dd4bf; --border:rgba(0,0,0,.16);
+      --gold:#D4AF37;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background-image:url('背景1.jpg');
+      background-repeat:repeat-y; background-size:cover; background-position:center top;
+      display:grid; grid-template-rows:auto 1fr auto; min-height:100vh;
+    }
+    a{color:inherit}
+    header{position:sticky; top:0; z-index:20; backdrop-filter:saturate(140%) blur(8px);
+      background:linear-gradient(180deg, rgba(245,245,245,.9), rgba(245,245,245,.6));
+      border-bottom:1px solid var(--ring);}
+    .wrap{max-width:1120px; margin:0 auto; padding:16px clamp(16px,4vw,24px);}
+    .bar{display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .name{font-weight:900; letter-spacing:.3px; margin:0; font-size:clamp(20px,3.2vw,32px);
+      text-shadow:2px 2px 4px rgba(0,0,0,.3);}
+    .btn{
+      appearance:none; border:none; background:linear-gradient(135deg, #000 40%, #FFD700 100%);
+      color:#fff; padding:.6rem 1rem; border-radius:999px; font-weight:700; text-decoration:none;
+      box-shadow:0 10px 4px rgba(0,0,0,.25);
+      transition:transform .2s ease, box-shadow .2s ease; cursor:pointer;
+      display:inline-flex; align-items:center; gap:.5rem;
+    }
+    .email-display {
+  font-size: 16px;
+  font-weight: 700;
+  color: black; /* 金色 */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+    .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 6px rgba(0,0,0,.35); }
+
+    .hero{padding:28px 0}
+    .panel{
+      display:flex; flex-direction:column; gap:20px; align-items:center;
+      padding:24px clamp(16px,4vw,32px);
+      border:1px solid var(--ring); border-radius:24px; background:var(--bg-glass);
+    }
+    @media (min-width:860px){
+      .panel{flex-direction:row; align-items:flex-start; gap:28px}
+      .avatar-final{margin-right:24px;}
+      .panel-text{flex:1; min-width:0;}
+    }
+    .avatar-final img{ width:500px; height:auto; display:block; object-fit:cover; }
+    .tag{font-size:.8rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted)}
+    .headline{font-size:clamp(24px,3.2vw,34px); line-height:1.2; margin:.25rem 0}
+    .intro{color:var(--muted); line-height:1.7}
+
+    .grid{display:grid; grid-template-columns:1fr; gap:18px; margin-top:22px}
+    @media (min-width:860px){ .grid{grid-template-columns:repeat(3,1fr)} }
+    .card{border:1px solid var(--ring); background:var(--bg-glass); border-radius:24px; padding:18px}
+    .card h3{
+      display:block; width:60%; margin:10px auto 14px; font-size:26px;
+      text-align:center; color:#fff; padding:8px 16px; border-radius:8px;
+      background:linear-gradient(135deg,#000 30%,#FFD700 100%);
+    }
+
+    .proj{margin:12px 6px 18px}
+    .gif-slot{
+      aspect-ratio:16/9; width:100%;
+      border:2px dashed var(--border); border-radius:14px;
+      display:flex; justify-content:center; align-items:center;
+      background:rgba(255,255,255,.6);
+      overflow:hidden;
+    }
+    .gif-slot img, .gif-slot video{
+      max-width:100%; max-height:100%; object-fit:contain; border-radius:12px; display:block;
+    }
+    .proj h4{margin:10px 0 6px; font-size:18px; color:#111}
+    .proj ul{margin:0; padding-left:1.1rem; color:var(--muted)}
+    .proj li{margin:.35rem 0}
+
+    /* 相邻项目的中心分割线 */
+    .card .proj + .proj { margin-top:72px; position:relative; }
+    .card .proj + .proj::before {
+      content:""; position:absolute; top:-36px; left:0; right:0; height:6px;
+      background:linear-gradient(90deg, rgba(212,175,55,.12), rgba(212,175,55,.45), rgba(212,175,55,.12));
+      border-radius:1px;
+    }
+
+    footer{padding:28px 16px; text-align:center; color:var(--muted);
+      backdrop-filter:saturate(140%) blur(6px); background:rgba(245,245,245,.8); border-top:1px solid var(--ring)}
+
+    /* 幻灯片 */
+    .slideshow{ position:relative; width:100%; height:100%; }
+    .slideshow .slide{ display:none; width:100%; height:100%; }
+    .slideshow .slide img{ width:100%; height:100%; object-fit:contain; display:block; }
+    .fade{ animation: fadeEffect 1s ease; }
+    @keyframes fadeEffect{ from{opacity:.35} to{opacity:1} }
+
+/* 针对中文内容，统一使用等线字体 */
+:lang(zh-CN) {
+  font-family: "DengXian", "Microsoft YaHei", sans-serif;
+}
+  </style>
+
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div>
+      <h1 class="name" data-i18n="name">Yuehang Lin</h1>
+      <!-- ★ 在这里插入邮箱 -->
+      <div id="emailDisplay" class="email-display">inkofpluto@gmail.com</div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a class="btn" id="cvBtn" href="Yuehang CV.pdf" download data-i18n="btn_download">Download CV</a>
+      <button id="langToggle" class="btn" type="button" aria-label="Toggle language">中文</button>
+    </div>
+  </div>
+</header>
+
+
+  <main class="wrap hero">
+    <section class="panel" aria-label="Intro">
+      <div class="avatar-final">
+        <img src="个人介绍.png" alt="Yuehang Lin Portrait and Logo">
+      </div>
+      <div class="panel-text">
+        <div class="tag" data-i18n="edu_tag">MSc of University Of Birmingham</div>
+        <h2 class="headline" data-i18n="headline">HCI / VR / HAPTICS RESEARCHER</h2>
+        <p class="intro" data-i18n="intro">
+          A highly effective Interdisciplinary (Maths, English, Computer Science) Research Engineer specializing in VR, Haptics, and Human-Computer Interaction (HCI). I possess a holistic, data-driven skill set spanning the entire research pipeline: from high-fidelity simulation (Unity, C#) and hardware prototyping (Fusion 360, sensors) to rigorous experimental evaluation. My core expertise lies in translating complex research problems into reliable, scalable, and cross-disciplinary interactive systems, and I am recognized as a fast learner who adapts quickly to new tools and domains.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="Focus Areas">
+      <!-- Research -->
+      <article class="card">
+        <h3 data-i18n="sec_research">Research</h3>
+
+        <!-- Haptic Slip Rendering -->
+        <div class="proj">
+          <div class="gif-slot">
+            <div class="slideshow ss1">
+              <div class="slide fade"><img src="exp_procedurev2.png" alt="Experiment Procedure Diagram"></div>
+              <div class="slide fade"><img src="HandMap.png" alt="Hand Map Diagram"></div>
+              <div class="slide fade"><img src="hero_remote.png" alt="Remote Grasp Illustration"></div>
+            </div>
+          </div>
+          <h4 data-i18n="r1_title">Haptic Slip Rendering for Improved Grasp Stability in VR Teleoperation (MSc Thesis)</h4>
+          <ul>
+            <li data-i18n="r1_b1">Developed a full VR–haptics closed-loop system integrating Unity/C#, custom fingertip hardware, and serial communication. Conducted a controlled user study (N=21) with over 2M frames of data. Results showed ~30% faster first success with haptics, angular error reduced from ~45° to ~18°, and multimodal feedback improved user confidence (NASA-TLX >6 vs. ~4.5 unimodal).</li>
+          </ul>
+        </div>
+
+        <!-- Remote Robot Grip Guidance -->
+        <div class="proj">
+          <div class="gif-slot">
+            <img src="Remote_System.png" alt="Remote Robot Grip Guidance System">
+          </div>
+          <h4 data-i18n="r2_title">Remote Robot Grip Guidance using Haptic Rendering</h4>
+          <ul>
+            <li data-i18n="r2_b1">Co-authored and implemented the RemoteHapticGrasp system that mapped fingertip slip cues into VR teleoperation. Designed ESP32-based haptic thimbles and Unity simulation of grasp stability across 15 random CoM conditions. User study revealed visual feedback alone often misled participants, while haptic cues improved grasp direction, and combined visual+haptic achieved best stability.</li>
+          </ul>
+        </div>
+
+        <!-- User Study & Analytics Toolkit -->
+        <div class="proj">
+          <div class="gif-slot">
+            <div class="slideshow ss2">
+              <div class="slide fade"><img src="NASA_TLX_Radar.png" alt="NASA-TLX Radar"></div>
+              <div class="slide fade"><img src="RTmean_trial_mean_SEM.png" alt="Recovery Time vs Trial"></div>
+              <div class="slide fade"><img src="Angular_Error_Bars_Attempt_Index.png" alt="Angular Error Bars"></div>
+              <div class="slide fade"><img src="first_success.png" alt="First Success Regression"></div>
+              <div class="slide fade"><img src="medianAngleDeg%20for%20Far%20CoM%20in%201s.png" alt="Tilt Angle vs MedianAngleDeg"></div>
+            </div>
+          </div>
+          <h4 data-i18n="r3_title">User Study & Analytics Toolkit</h4>
+          <ul>
+            <li data-i18n="r3_b1">Created a reusable analytics pipeline for interaction experiments. Includes regression and statistical models for recovery time, angular error, and completion rates. Delivered visualizations (radar, error bars, regressions) to evaluate perception, workload, and success metrics across multimodal conditions.</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Hardware -->
+      <article class="card">
+        <h3 data-i18n="sec_hardware">Hardware</h3>
+
+        <!-- Fingertip Device -->
+        <div class="proj">
+          <div class="gif-slot">
+            <video autoplay loop muted playsinline>
+              <source src="指尖设备.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="gif-slot" style="margin-top:10px;">
+            <img src="硬件系统.jpg" alt="Custom Hardware System">
+          </div>
+          <h4 data-i18n="h1_title">Custom Fingertip Haptic Device & Tracking Rig</h4>
+          <ul>
+            <li data-i18n="h1_b1">Engineered modular fingertip haptic devices with multi-axis sensor integration. Designed and 3D-printed stable tracking rigs for repeatable experiments, enabling closed-loop VR–haptics studies with real-time serial I/O.</li>
+          </ul>
+        </div>
+
+        <!-- Crystal Music Installation -->
+        <div class="proj">
+          <div class="gif-slot">
+            <video autoplay loop muted playsinline>
+              <source src="水晶.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="gif-slot" style="margin-top:10px;">
+            <img src="水晶实拍.jpg" alt="Crystal Music Hardware Photo">
+          </div>
+          <h4 data-i18n="h2_title">Crystal Music Interactive Installation (with OBI Robotics)</h4>
+          <ul>
+            <li data-i18n="h2_b1">Led hardware engineering for an interactive art installation combining crystals, sensors, and sound synthesis. Designed Fusion 360 models and reusable sensor modules, ensuring stability in exhibition settings. Bridged artistic concepts with reliable HCI engineering</li>
+          </ul>
+        </div>
+
+        <!-- Circuit -->
+        <div class="proj">
+          <div class="gif-slot" style="margin-top:10px;">
+            <img src="Circuit.png" alt="ESP32 + TB6612 Circuit for Five Finger Motors">
+          </div>
+          <h4 data-i18n="h3_title">Circuit & System Integration</h4>
+          <ul>
+            <li data-i18n="h3_b1">Built ESP32 + TB6612 motor driver circuits to drive five independent fingertip motors for haptic rendering. Ensured modular wiring, stable power delivery, and compact enclosures, supporting long-duration experiments.</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Software -->
+      <article class="card">
+        <h3 data-i18n="sec_software">Software</h3>
+
+        <!-- XR–Haptics -->
+        <div class="proj">
+          <div class="gif-slot">
+            <video autoplay loop muted playsinline>
+              <source src="失败尝试.mp4" type="video/mp4">
+            </video>
+          </div>
+          <h4 data-i18n="s1_title">XR–Haptics Closed-Loop Stack</h4>
+          <ul>
+            <li data-i18n="s1_b1">Implemented a real-time Unity/C# physics pipeline with haptic rendering, serial communication, and user study logging. Enabled system tuning for slip rendering and stable experimental replication. Provided modular scripts for experimental conditions and automated data collection</li>
+          </ul>
+        </div>
+
+        <!-- VitaFit -->
+        <div class="proj">
+          <div class="gif-slot">
+            <div class="slideshow ss3">
+              <div class="slide fade"><img src="VitaFit1.jpg" alt="VitaFit Screen 1"></div>
+              <div class="slide fade"><img src="VitaFit2.jpg" alt="VitaFit Screen 2"></div>
+              <div class="slide fade"><img src="VitaFit3.jpg" alt="VitaFit Screen 3"></div>
+              <div class="slide fade"><img src="VitaFit4.jpg" alt="VitaFit Screen 4"></div>
+            </div>
+          </div>
+          <h4 data-i18n="s2_title">VitaFit | Health Management App Concept</h4>
+          <ul>
+            <li data-i18n="s2_b1">Co-designed a lifestyle app (UoB Design Challenge). Features included food barcode scanning, AI-powered meal suggestions, wearable integration, and UI prototypes emphasizing simplicity and usability. Tailored for the 20–30 age group to encourage better diet tracking</li>
+          </ul>
+        </div>
+
+        <!-- Fall8 -->
+        <div class="proj">
+          <div class="gif-slot">
+            <div class="slideshow ss4">
+              <div class="slide fade"><img src="Fall8_1.png" alt="Fall8 App Screens - Status & Alert"></div>
+              <div class="slide fade"><img src="Fall8_2.png" alt="Fall8 Caregiver & Recommendations"></div>
+              <div class="slide fade"><img src="Fall8_3.png" alt="Fall8 Login & Escalation Service"></div>
+              <div class="slide fade"><img src="数据收集.jpg" alt="Fall8 Data Collection Experiment"></div>
+              <div class="slide fade"><img src="摔倒.png" alt="Fall8 Fall Scenario"></div>
+            </div>
+          </div>
+          <h4 data-i18n="s3_title">Fall8 | IoT-based Fall Detection System</h4>
+          <ul>
+            <li data-i18n="s3_b1">Developed an Arduino Nano 33 BLE–based system with Edge Impulse ML integration and Flutter app. Achieved 95% detection accuracy by combining self-collected and public datasets. The app provided real-time emergency alerts, caregiver notifications, and recovery confirmation</li>
+          </ul>
+        </div>
+
+        <!-- Platform -->
+        <div class="proj">
+          <div class="gif-slot">
+            <div class="slideshow ss5">
+              <div class="slide fade"><img src="平台1.png" alt="Platform Screen 1"></div>
+              <div class="slide fade"><img src="平台2.png" alt="Platform Screen 2"></div>
+              <div class="slide fade"><img src="平台3.png" alt="Platform Screen 3"></div>
+              <div class="slide fade"><img src="平台4.png" alt="Platform Screen 4"></div>
+              <div class="slide fade"><img src="平台5.png" alt="Platform Screen 5"></div>
+              <div class="slide fade"><img src="平台6.png" alt="Platform Screen 6"></div>
+              <div class="slide fade"><img src="平台7.png" alt="Platform Screen 7"></div>
+              <div class="slide fade"><img src="平台8.png" alt="Platform Screen 8"></div>
+              <div class="slide fade"><img src="平台9.png" alt="Platform Screen 9"></div>
+            </div>
+          </div>
+          <h4 data-i18n="s4_title">Interactive Platform | Vocational Chinese Learning System</h4>
+          <ul>
+            <li data-i18n="s4_b1">Built a segmented learning platform with interactive modules, personalized recommendations, and task reminders. Improved course completion rate by 50% and task completion by 40%. Delivered UI prototypes and backend logic for multi-user environments.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>© <span id="y"></span> <span data-i18n="name">Yuehang Lin</span> · <span data-i18n="rights">All rights reserved.</span></footer>
+
+<script>
+  
+  // 年份
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // 幻灯片
+  function initSlideshow(selector, interval){
+    const root = document.querySelector(selector);
+    if(!root) return;
+    const slides = Array.from(root.getElementsByClassName('slide'));
+    if(slides.length === 0) return;
+    let i = 0;
+    function show(n){
+      slides.forEach(s => s.style.display = 'none');
+      slides[n].style.display = 'block';
+    }
+    show(i);
+    setInterval(() => { i = (i + 1) % slides.length; show(i); }, interval);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    initSlideshow('.ss1', 3000);
+    initSlideshow('.ss2', 3000);
+    initSlideshow('.ss3', 3000);
+    initSlideshow('.ss4', 3000);
+    initSlideshow('.ss5', 3000);
+  });
+
+  // ===== 多语言字典（可继续扩展） =====
+  const i18n = {
+    en: {
+      name: "Yuehang Lin",
+      btn_download: "Download CV",
+      rights: "All rights reserved.",
+      edu_tag: "MSc of University Of Birmingham",
+      headline: "HCI / VR / HAPTICS RESEARCHER",
+      intro: "A highly effective Interdisciplinary (Maths, English, Computer Science) Research Engineer specializing in VR, Haptics, and Human-Computer Interaction (HCI). I possess a holistic, data-driven skill set spanning the entire research pipeline: from high-fidelity simulation (Unity, C#) and hardware prototyping (Fusion 360, sensors) to rigorous experimental evaluation. My core expertise lies in translating complex research problems into reliable, scalable, and cross-disciplinary interactive systems, and I am recognized as a fast learner who adapts quickly to new tools and domains.",
+      sec_research:"Research",
+      r1_title:"Haptic Slip Rendering for Improved Grasp Stability in VR Teleoperation (MSc Thesis)",
+      r1_b1:"Developed a full VR–haptics closed-loop system integrating Unity/C#, custom fingertip hardware, and serial communication. Conducted a controlled user study (N=21) with over 2M frames of data. Results showed ~30% faster first success with haptics, angular error reduced from ~45° to ~18°, and multimodal feedback improved user confidence (NASA-TLX >6 vs. ~4.5 unimodal).",
+      r2_title:"Remote Robot Grip Guidance using Haptic Rendering",
+      r2_b1:"Co-authored and implemented the RemoteHapticGrasp system that mapped fingertip slip cues into VR teleoperation. Designed ESP32-based haptic thimbles and Unity simulation of grasp stability across 15 random CoM conditions. User study revealed visual feedback alone often misled participants, while haptic cues improved grasp direction, and combined visual+haptic achieved best stability.",
+      r3_title:"User Study & Analytics Toolkit",
+      r3_b1:"Created a reusable analytics pipeline for interaction experiments. Includes regression and statistical models for recovery time, angular error, and completion rates. Delivered visualizations (radar, error bars, regressions) to evaluate perception, workload, and success metrics across multimodal conditions.",
+      sec_hardware:"Hardware",
+      h1_title:"Custom Fingertip Haptic Device & Tracking Rig",
+      h1_b1:"Engineered modular fingertip haptic devices with multi-axis sensor integration. Designed and 3D-printed stable tracking rigs for repeatable experiments, enabling closed-loop VR–haptics studies with real-time serial I/O.",
+      h2_title:"Crystal Music Interactive Installation (with OBI Robotics)",
+      h2_b1:"Led hardware engineering for an interactive art installation combining crystals, sensors, and sound synthesis. Designed Fusion 360 models and reusable sensor modules, ensuring stability in exhibition settings. Bridged artistic concepts with reliable HCI engineering",
+      h3_title:"Circuit & System Integration",
+      h3_b1:"Built ESP32 + TB6612 motor driver circuits to drive five independent fingertip motors for haptic rendering. Ensured modular wiring, stable power delivery, and compact enclosures, supporting long-duration experiments.",
+      sec_software:"Software",
+      s1_title:"XR–Haptics Closed-Loop Stack",
+      s1_b1:"Implemented a real-time Unity/C# physics pipeline with haptic rendering, serial communication, and user study logging. Enabled system tuning for slip rendering and stable experimental replication. Provided modular scripts for experimental conditions and automated data collection",
+      s2_title:"VitaFit | Health Management App Concept",
+      s2_b1:"Co-designed a lifestyle app (UoB Design Challenge). Features included food barcode scanning, AI-powered meal suggestions, wearable integration, and UI prototypes emphasizing simplicity and usability. Tailored for the 20–30 age group to encourage better diet tracking",
+      s3_title:"Fall8 | IoT-based Fall Detection System",
+      s3_b1:"Developed an Arduino Nano 33 BLE–based system with Edge Impulse ML integration and Flutter app. Achieved 95% detection accuracy by combining self-collected and public datasets. The app provided real-time emergency alerts, caregiver notifications, and recovery confirmation",
+      s4_title:"Interactive Platform | Vocational Chinese Learning System",
+      s4_b1:"Built a segmented learning platform with interactive modules, personalized recommendations, and task reminders. Improved course completion rate by 50% and task completion by 40%. Delivered UI prototypes and backend logic for multi-user environments."
+    },
+    zh: {
+      name: "林悦航",
+      btn_download: "下载简历",
+      rights: "保留所有权利。",
+      edu_tag: "伯明翰大学 硕士研究生",
+      headline: "人机交互 / 虚拟现实 / 触觉 研究员",
+      intro: "一名高效的跨学科（数学、英语、计算机科学）研究工程师，专注于虚拟现实、触觉和人机交互（HCI）。我具备贯穿整个研究流程的数据驱动技能：从高保真模拟（Unity, C#）、硬件原型设计（Fusion 360、传感器），到严谨的实验评估。我的核心专长是将复杂研究问题转化为可靠、可扩展、跨学科的交互系统，并且能够快速学习并适应新工具与新领域。",
+      sec_research:"研究",
+      r1_title:"Haptic Slip Rendering：提升 VR 远程抓取稳定性的触觉滑移渲染（硕士论文）",
+      r1_b1:"构建 Unity/C# + 自研指尖装置 + 串口通信的 VR–触觉闭环系统；开展对照用户研究（N=21，超 200 万帧数据）。结果显示：加入触觉后首次成功时间约快 30%，角度误差由 ~45° 降至 ~18°；多模态反馈显著提升主观信心（NASA-TLX >6，相比单模态 ~4.5）。",
+      r2_title:"Remote Robot Grip Guidance：基于触觉渲染的远程抓取引导",
+      r2_b1:"共同研发 RemoteHapticGrasp，将指尖滑移线索映射到 VR 远程操作；设计 ESP32 指套式触觉装置，并在 Unity 中模拟 15 种随机重心条件。研究发现仅视觉反馈易误导，触觉提升抓取方向判断，视触结合表现最佳。",
+      r3_title:"用户研究与分析工具包",
+      r3_b1:"构建可复用的数据分析流水线，涵盖恢复时间、角度误差与完成率的回归与统计模型；输出雷达图、误差棒与回归可视化，用于评估多模态条件下的感知、负载与成功率指标。",
+      sec_hardware:"硬件",
+      h1_title:"指尖触觉装置与追踪夹具",
+      h1_b1:"设计模块化指尖触觉装置并集成多轴传感；3D 打印稳定追踪夹具实现可复现实验，支持实时串口 I/O 的 VR–触觉闭环研究。",
+      h2_title:"水晶音乐交互装置（与 OBI Robotics 合作）",
+      h2_b1:"负责硬件工程实现，将水晶、传感与声音合成结合；完成 Fusion 360 建模与可复用传感模块设计，保障展陈稳定性，将艺术理念落地为可靠的人机交互系统。",
+      h3_title:"电路与系统集成",
+      h3_b1:"搭建 ESP32 + TB6612 电机驱动电路，驱动 5 路独立指尖电机用于触觉渲染；实现模块化布线与稳定供电及紧凑外壳，支持长时实验。",
+      sec_software:"软件",
+      s1_title:"XR–Haptics 闭环软件栈",
+      s1_b1:"实现实时 Unity/C# 物理与触觉渲染管线、串口通信与实验日志；支持滑移渲染调参与可复现实验，提供条件切换与数据采集的模块化脚本。",
+      s2_title:"VitaFit | 健康管理应用概念",
+      s2_b1:"参与 UoB 设计挑战的生活方式 App 原型：条码扫描、AI 菜谱推荐、可穿戴集成与简洁可用的 UI 设计；面向 20–30 岁人群提升饮食记录。",
+      s3_title:"Fall8 | 基于物联网的摔倒检测系统",
+      s3_b1:"基于 Arduino Nano 33 BLE 与 Edge Impulse ML 的端侧识别方案并配套 Flutter App；结合自采与公开数据集实现约 95% 检测准确率，支持实时告警、看护通知与恢复确认。",
+      s4_title:"交互式平台 | 职业中文学习系统",
+      s4_b1:"构建分段式学习平台，包含交互模块、个性化推荐与任务提醒；课程完课率提升约 50%，任务完成度提升约 40%，并交付多用户场景的 UI 原型与后端逻辑。"
+    }
+  };
+
+  let currentLang = 'en';
+  // === 不同语言对应的简历文件路径与下载文件名 ===
+const CV = {
+  en: { href: "Yuehang CV.pdf", filename: "Yuehang_Lin_CV_EN.pdf" },
+  zh: { href: "林悦航简历.pdf",   filename: "林悦航_中文简历.pdf" }
+};
+
+  const $toggle = document.getElementById('langToggle');
+
+function applyI18n(lang){
+  const dict = i18n[lang];
+  document.documentElement.lang = (lang === 'zh' ? 'zh-CN' : 'en');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key] !== undefined) {
+      el.textContent = dict[key];
+    }
+  });
+
+  // 切换按钮文字
+  $toggle.textContent = (lang === 'en') ? '中文' : 'English';
+
+  // 切换简历文件
+  const $cvBtn = document.getElementById('cvBtn');
+  if ($cvBtn && CV[lang]) {
+    $cvBtn.href = CV[lang].href;
+    $cvBtn.setAttribute('download', CV[lang].filename);
+  }
+
+  // ★ 切换邮箱
+  const $email = document.getElementById('emailDisplay');
+  if ($email) {
+    $email.textContent = (lang === 'en') ? "inkofpluto@gmail.com" : "inkofpluto@163.com";
+  }
+}
+
+
+  // 初始英文
+  applyI18n(currentLang);
+
+  $toggle.addEventListener('click', () => {
+    currentLang = (currentLang === 'en') ? 'zh' : 'en';
+    applyI18n(currentLang);
+  });
+</script>
+</body>
+</html>
